@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SimpleProductAPI.Data;
 using SimpleProductAPI.Models;
+using System.Threading;
 
 namespace SimpleProductAPI.Repositories
 {
@@ -18,6 +19,22 @@ namespace SimpleProductAPI.Repositories
             return await _context.Products
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
+        }
+
+        public async Task<(List<Product> Items, int Total)> GetPagedAsync(
+            int page,
+            int pageSize,
+            CancellationToken cancellationToken = default)
+        {
+            var total = await _context.Products.CountAsync(cancellationToken);
+
+            var items = await _context.Products
+                .AsNoTracking()
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
+            return (items, total);
         }
     }
        
