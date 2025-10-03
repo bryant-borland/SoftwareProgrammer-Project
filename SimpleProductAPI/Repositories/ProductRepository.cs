@@ -13,9 +13,11 @@ namespace SimpleProductAPI.Repositories
             _context = context;
         }
 
-        public async Task<List<Product>> GetAllAsync()
+        public async Task<List<Product>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return await _context.Products.AsNoTracking().ToListAsync();
+            return await _context.Products
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
         }
     }
        
